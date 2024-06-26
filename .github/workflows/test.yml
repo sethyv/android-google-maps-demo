@@ -54,4 +54,5 @@ jobs:
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
             file_path: 'apk/app-debug.apk'
             initial_comment: 'post by slack-upload-file'
+            file_type: 'auto'
             # thread_ts: 'option'
