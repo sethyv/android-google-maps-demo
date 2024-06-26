@@ -1,4 +1,4 @@
-name: Minimal Android CI Workflow
+name: Android CI
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         with:
           name: apk
           path: app/build/outputs/apk/debug/app.apk
-  
+
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
@@ -50,9 +50,9 @@ jobs:
 
       - uses: MeilCli/slack-upload-file@v4
         with:
-            slack_token: ${{ secrets.SLACK_TOKEN }}
-            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            file_path: 'apk/app-debug.apk'
-            initial_comment: 'Release ${{ github.event.repository.name }} v${{ github.run_number }}'
-            file_type: 'auto'
-            # thread_ts: 'option'
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: "apk/app-debug.apk"
+          initial_comment: "Release ${{ github.event.repository.name }} v${{ github.run_number }}"
+          file_type: "auto"
+          # thread_ts: 'option'
