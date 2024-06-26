@@ -16,17 +16,7 @@ jobs:
           java-version: 1.8
       - name: Run Tests
         run: bash ./gradlew test --stacktrace
-  apk:
-    name: Generate APK
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Setup JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
+
       - name: Build APK
         run: bash ./gradlew assembleDebug --stacktrace
       - name: Upload APK
@@ -34,12 +24,7 @@ jobs:
         with:
           name: apk
           path: app/build/outputs/apk/debug/app-debug.apk
-  release:
-    name: Release APK
-    needs: apk
-    # if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
+  
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
@@ -62,3 +47,11 @@ jobs:
           asset_path: apk/app-debug.apk
           asset_name: MensaApp.apk
           asset_content_type: application/zip
+
+      - uses: MeilCli/slack-upload-file@v4
+        with:
+            slack_token: ${{ secrets.SLACK_TOKEN }}
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            file_path: 'apk/app-debug.apk'
+            initial_comment: 'post by slack-upload-file'
+            # thread_ts: 'option'
