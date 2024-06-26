@@ -1,0 +1,63 @@
+name: Build project for release
+
+on:
+  push:
+
+jobs:
+  build:
+    # if: github.event.pull_request.merged == true
+    
+    runs-on: ubicloud
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: "true"
+          token: ${{ secrets.GHB_USER_TOKEN }}
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "18"
+          distribution: "semeru"
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Build debug APK
+        run: bash ./gradlew assembleDebug --stacktrace
+
+      - name: Check files
+        run: ls -al app/build/outputs/apk/debug
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHB_USER_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: ${{ github.event.repository.name }} v${{ github.run_number }}
+
+      - name: Upload Release APK
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/debug/app-debug.apk
+          asset_name: ${{ github.event.repository.name }}.apk
+          asset_content_type: application/vnd.android.package-archive
