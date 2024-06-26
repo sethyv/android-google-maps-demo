@@ -19,17 +19,17 @@ jobs:
 
       - name: Build APK
         run: bash ./gradlew assembleDebug --stacktrace
-        
+
       - name: Upload APK
         uses: actions/upload-artifact@v1
         with:
           name: apk
-          path: app/build/outputs/apk/debug/app.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Download APK from build
-        uses: actions/download-artifact@v1
-        with:
-          name: apk
+    #   - name: Download APK from build
+    #     uses: actions/download-artifact@v1
+    #     with:
+    #       name: apk
     #   - name: Create Release
     #     id: create_release
     #     uses: actions/create-release@v1
@@ -48,6 +48,7 @@ jobs:
     #       asset_path: apk/app.apk
     #       asset_name: YVAndroidApp.apk
     #       asset_content_type: application/zip
+
 
       - uses: MeilCli/slack-upload-file@v4
         with:
