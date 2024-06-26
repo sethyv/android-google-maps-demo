@@ -7,7 +7,7 @@ jobs:
   build:
     # if: github.event.pull_request.merged == true
     
-    runs-on: ubicloud
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
