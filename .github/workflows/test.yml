@@ -5,7 +5,7 @@ on:
 
 jobs:
   test:
-    name: Run Unit Tests
+    name: Android CI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,7 +23,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/app.apk
   
       - name: Download APK from build
         uses: actions/download-artifact@v1
@@ -44,8 +44,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHB_USER_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: apk/app-debug.apk
-          asset_name: MensaApp.apk
+          asset_path: apk/app.apk
+          asset_name: YVAndroidApp.apk
           asset_content_type: application/zip
 
       - uses: MeilCli/slack-upload-file@v4
@@ -53,6 +53,6 @@ jobs:
             slack_token: ${{ secrets.SLACK_TOKEN }}
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
             file_path: 'apk/app-debug.apk'
-            initial_comment: 'post by slack-upload-file'
+            initial_comment: 'Release ${{ github.event.repository.name }} v${{ github.run_number }}'
             file_type: 'auto'
             # thread_ts: 'option'
